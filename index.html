@@ -17,15 +17,49 @@
 <div id="app">
     <div class="header">
         <h1>Vue.js Poster Store</h1>
+        <form class="searchbar" v-on:submit.prevent="searchSubmit">
+            <input type="text" placeholder="Search for posters" v-model="searchValue">
+            <input type=submit value="search" class="btn" >
+        </form>
     </div>
     <div class="main">
-        <div class="products">
-            <p>Products go here.</p>
+        <div class="products" >
+            <div class="search-results" v-if="!loading">
+                Found {{items.length}} for search {{lastSearch}}.
+            </div>
+            <div v-else>
+                Loading...
+            </div>
+            <div class="product" v-for="(item, index) in items" >
+                <div class="product-image">
+                    <img v-bind:src="item.link">
+                </div>
+                <div class="product-title">
+                    <h4>{{ item.title }}</h4>
+                    <p class="item-price"> <strong>price: {{ price | currency}} </strong></p>
+                    <button class="btn add-to-cart" v-on:click="addItem(index)">Add to cart</button>
+                </div>
+            </div>
         </div>
-        <div class="cart">
+        <div class="cart" >
             <h2>Shopping Cart</h2>
-            <div>
-                No items in the cart.
+            <ul>
+                <li class="cart-item" v-for="cartItem in cart">
+                    <div class="item-title">
+                        {{cartItem.title}}
+                    </div> 
+                    <div>
+                        {{cartItem.unitPrice | currency}} x {{cartItem.quantity}}
+                        <button class="btn" v-on:click="inc(cartItem)">+</button>
+                        <button class="btn" v-on:click="dec(cartItem)">-</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="cart-total" v-if="cart.length">
+                {{ total | currency }}
+            </div>
+            <div v-else>
+                <p class="empty-cart">No items in cart</p>
             </div>
         </div>
     </div>
@@ -33,6 +67,8 @@
 
 <!-- Scripts -->
 <script src="/reload/reload.js"></script>
+<script src="/node_modules/vue/dist/vue.js"></script>
+<script src="/node_modules/vue-resource/dist/vue-resource.js"></script>
 <script type="text/javascript" src="public/script.js"></script>
 
 </body>
